@@ -17,12 +17,13 @@ namespace NoSLoofah.BuffSystem
 
         public List<Buff> GetBuffs => new List<Buff>(buffs);
         public void RegisterOnAddBuff(Action act) { onAddBuff += act; }
-        public void RemoveOnAddBuff(Action act) { onRemoveBuff -= act; }
+        public void RemoveOnAddBuff(Action act) { onAddBuff -= act; }
         public void RegisterOnRemoveBuff(Action act) { onRemoveBuff += act; }
         public void RemoveOnRemoveBuff(Action act) { onRemoveBuff -= act; }
         #region 私有方法
         private void AddBuff(IBuff buff, GameObject caster)
         {
+            // TODO: Q：为什么添加新Buff前要执行Update？
             if (!updated) Update();
             Buff bf = (Buff)buff;
             if (bf.IsEmpty())
@@ -168,6 +169,10 @@ namespace NoSLoofah.BuffSystem
             forOnBuffDestroy = null;
             forOnBuffStart = null;
         }
+
+        // Q:为什么要在LateUpdate中执行？
+        // A:因为Buff的生命周期函数中可能会有一些需要在Update中执行的操作，例如在Buff中的Update中对目标对象进行操作
+        
         private void LateUpdate()
         {
             updated = false;
